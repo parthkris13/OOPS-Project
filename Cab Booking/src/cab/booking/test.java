@@ -24,6 +24,7 @@ public class test {
                                                    + "emailID BLOB," 
                                                    + "pswrd BLOB," 
                                                    + "wallet INTEGER," 
+                                                   + "free_at INTEGER," 
                                                    + "trip_status TEXT);" ; 
         
          try{
@@ -43,10 +44,12 @@ public class test {
    public static void createTableDrivers(){
       connectToDB();
       try{
-         String userDrivers = "CREATE TABLE drivers (" + "username TEXT," 
+         String userDrivers = "CREATE TABLE drivers (" + "username TEXT,"
+                                                   + "driverID INTEGER PRIMARY KEY," 
                                                    + "rating INTEGER ,"
                                                    + "phone_num INTEGER," 
-                                                   + "emailID BLOB,"  
+                                                   + "emailID BLOB,"
+                                                   + "free INTEGER,"   
                                                    + "status TEXT);" ; 
         
          try{
