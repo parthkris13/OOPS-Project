@@ -1,18 +1,24 @@
+package cab.booking.frames;
+import javax.swing.JOptionPane;
 import java.sql.*;
 
 public class test {
-   private static Connection c = null;
-   private static Statement stmt = null;
+   public static Connection con = null;
+   public static Statement stmt = null;
 
-   public static void connectToDB(){
+   public static Connection connectToDB(){
       try {
          Class.forName("org.sqlite.JDBC");
-         c = DriverManager.getConnection("jdbc:sqlite:test.db");
+         Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/sheyril/Desktop/OOP/test.db");
+//         JOptionPane.showMessageDialog(null,"Connected");
+         return con;
       } catch ( Exception e ) {
-         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-         System.exit(0);
+//         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+//         System.exit(0);
+           JOptionPane.showMessageDialog(null,e);
+           return null;
       }
-      System.out.println("Opened database successfully");
+//      System.out.println("Opened database successfully");
    }
 
    public static void createTableUsers(){
@@ -23,17 +29,17 @@ public class test {
                                                    + "phone_num INTEGER," 
                                                    + "emailID BLOB," 
                                                    + "pswrd BLOB," 
-                                                   + "wallet INTEGER," 
-                                                   + "free_at INTEGER," 
-                                                   + "trip_status TEXT);" ; 
+                                                   + "wallet INTEGER DEFAULT 0," 
+                                                   + "free_at INTEGER DEFAULT 0," 
+                                                   + "trip_status TEXT DEFAULT 'F');" ; 
         
          try{
-            stmt = c.createStatement();
+            stmt = con.createStatement();
             stmt.executeUpdate(userTable);
          } catch (SQLException e){
             System.out.println("SQLException");
          }
-         c.close();
+         con.close();
       }catch ( Exception e ) {
          System.out.println("Error occured");
          System.exit(1);
@@ -53,12 +59,12 @@ public class test {
                                                    + "status TEXT);" ; 
         
          try{
-            stmt = c.createStatement();
+            stmt = con.createStatement();
             stmt.executeUpdate(userDrivers);
          } catch (SQLException e){
             System.out.println("SQLException");
          }
-         c.close();
+         con.close();
       }catch ( Exception e ) {
          System.out.println("Error occured");
          System.exit(1);
@@ -76,12 +82,12 @@ public class test {
                                                    + "time INTEGER);" ; 
         
          try{
-            stmt = c.createStatement();
+            stmt = con.createStatement();
             stmt.executeUpdate(locations);
          } catch (SQLException e){
             System.out.println("SQLException");
          }
-         c.close();
+         con.close();
       }catch ( Exception e ) {
          System.out.println("Error occured");
          System.exit(1);
