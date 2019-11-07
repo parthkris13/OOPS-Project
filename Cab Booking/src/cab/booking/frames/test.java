@@ -1,10 +1,16 @@
 package cab.booking.frames;
 import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class test {
    public static Connection con = null;
    public static Statement stmt = null;
+   public static PreparedStatement st = null;
 
    public static Connection connectToDB(){
       try {
@@ -25,13 +31,13 @@ public class test {
       connectToDB();
       try{
          String userTable = "CREATE TABLE users (" + "username TEXT," 
-                                                   + "userID INTEGER PRIMARY KEY,"
+                                                   + "userID BLOB PRIMARY KEY,"
                                                    + "phone_num INTEGER," 
                                                    + "emailID BLOB," 
                                                    + "pswrd BLOB," 
-                                                   + "wallet INTEGER DEFAULT 0," 
-                                                   + "free_at INTEGER DEFAULT 0," 
-                                                   + "trip_status TEXT DEFAULT 'F');" ; 
+                                                   + "wallet INTEGER," 
+                                                   + "free_at INTEGER," 
+                                                   + "trip_status TEXT);" ; 
         
          try{
             stmt = con.createStatement();
@@ -51,7 +57,8 @@ public class test {
       connectToDB();
       try{
          String userDrivers = "CREATE TABLE drivers (" + "username TEXT,"
-                                                   + "driverID INTEGER PRIMARY KEY," 
+                                                   + "driverID INTEGER PRIMARY KEY,"
+                                                   + "driver_loc TEXT,"
                                                    + "rating INTEGER ,"
                                                    + "phone_num INTEGER," 
                                                    + "emailID BLOB,"
@@ -77,8 +84,8 @@ public class test {
       try{
          String locations = "CREATE TABLE locations (" + "src_loc TEXT," 
                                                    + "dest_loc TEXT ,"
-                                                   + "fare INTEGER," 
-                                                   + "num_drivers INTEGER,"  
+                                                   + "fare INTEGER,"
+                                                   + "loc_id INTEGER,"
                                                    + "time INTEGER);" ; 
         
          try{
@@ -94,10 +101,54 @@ public class test {
       }
       System.out.println("Table created successfully");
    }
+   
+   public static void populate(){
+      con=connectToDB();
+      Object[][] data = {
+         {"Secunderabad Station", "BPHC", 250, 1, 40},
+         {"Secunderabad Station", "Jubilee Hills", 250, 1, 40},
+         {"Secunderabad Station", "Begumpet", 250, 1, 40},
+         {"Secunderabad Station", "Airport", 250, 1, 40},
+         {"Jubilee Hills", "BPHC", 250, 2, 40},
+         {"Jubilee Hills", "Secunderabad Station", 250, 2, 40},
+         {"Jubilee Hills", "Begumpet", 250, 2, 40},
+         {"Jubilee Hills", "Airport", 250, 2, 40},
+         {"BPHC", "Airport", 250, 3, 40},
+         {"BPHC", "Secunderabad Station", 250, 3, 40},
+         {"BPHC", "Jubilee Hills", 250, 3, 40},
+         {"BPHC", "Begumpet", 250, 3, 40},
+         {"Begumpet", "Airport", 250, 4, 40},
+         {"Begumpet", "BPHC", 250, 4, 40},
+         {"Begumpet", "Jubilee Hills", 250, 4, 40},
+         {"Begumpet", "Secunderabad Station", 250, 4, 40},
+         {"Airport", "Begumpet", 250, 5, 40},
+         {"Airport", "BPHC", 250, 5, 40},
+         {"Airport", "Secunderabad Station", 250, 5, 40},
+         {"Airport", "Jubilee Hills", 250, 5, 40}
+         };
+
+         try{
+            String sql = "insert into locations values (?,?,?,?,?)";
+            st= con.prepareStatement(sql);
+            for (Object[] a : data){
+                st.setString(1, (String)a[0]);
+                st.setString(2, (String)a[1]);
+                st.setInt(3, (Integer)a[2]);
+                st.setInt(4, (Integer)a[3]);
+                st.setInt(5, (Integer)a[4]);
+                st.execute();
+            }
+//            st.executeBatch();
+//            st.close();
+         }catch(Exception e){
+             JOptionPane.showMessageDialog(null,e);
+         }
+   }
 
    public static void main( String args[] ) {
-      createTableUsers();
-      createTableDrivers();
-      createTableLocations();
+//      createTableUsers();
+//      createTableDrivers();
+//      createTableLocations();
+      populate();
    }
 }
