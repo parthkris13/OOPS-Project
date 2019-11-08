@@ -59,11 +59,11 @@ public class test {
          String userDrivers = "CREATE TABLE drivers (" + "username TEXT,"
                                                    + "driverID INTEGER PRIMARY KEY,"
                                                    + "driver_loc TEXT,"
-                                                   + "rating INTEGER ,"
+                                                   + "rating REAL,"
                                                    + "phone_num INTEGER," 
                                                    + "emailID BLOB,"
                                                    + "free INTEGER,"   
-                                                   + "status TEXT);" ; 
+                                                   + "status INTEGER);" ; 
         
          try{
             stmt = con.createStatement();
@@ -104,7 +104,7 @@ public class test {
    
    public static void populate(){
       con=connectToDB();
-      Object[][] data = {
+      Object[][] loc_data = {
          {"Secunderabad Station", "BPHC", 250, 1, 40},
          {"Secunderabad Station", "Jubilee Hills", 250, 1, 40},
          {"Secunderabad Station", "Begumpet", 250, 1, 40},
@@ -130,12 +130,44 @@ public class test {
          try{
             String sql = "insert into locations values (?,?,?,?,?)";
             st= con.prepareStatement(sql);
-            for (Object[] a : data){
+            for (Object[] a : loc_data){
                 st.setString(1, (String)a[0]);
                 st.setString(2, (String)a[1]);
                 st.setInt(3, (Integer)a[2]);
                 st.setInt(4, (Integer)a[3]);
                 st.setInt(5, (Integer)a[4]);
+                st.execute();
+            }
+//            st.executeBatch();
+//            st.close();
+         }catch(Exception e){
+             JOptionPane.showMessageDialog(null,e);
+         }
+         
+         Object[][] driver_data={
+             {"Rahul", 1, "Begumpet", 4.3, 9985734216d, "rahul@gmail.com", 0, 0},
+             {"Chetan", 2, "Jubilee Hills", 4.1, 9985254276d, "chetan@gmail.com", 0, 0},
+             {"Raghav", 3, "Secunderabad Station", 4.0, 9865734216d, "raghav@gmail.com", 0, 0},
+             {"Rakesh", 4, "BPHC", 3.8, 9185734317d, "rakesh@gmail.com", 0, 0},
+             {"Priya", 5, "Begumpet", 4.7, 9985736244d, "priya@gmail.com", 0, 0},
+             {"Jahnvi", 6, "BPHC", 4.3, 9985167216d, "jahnvi@gmail.com", 0, 0},
+             {"Moolchand", 7, "Airport", 4.8, 9785734919d, "moolchand@gmail.com", 0, 0},
+             {"Shaurya", 8, "Jubilee Hills", 3.5, 9685824210d, "shaurya@gmail.com", 0, 0},
+             {"Nikita", 9, "Secunderabad Station", 4.3, 9763834216d, "nikita@gmail.com", 0, 0},
+             {"Sohaib", 10, "Airport", 4.8, 9743634237d, "sohaib@gmail.com", 0, 0}
+         };
+         try{
+            String sql = "insert into drivers values (?,?,?,?,?,?,?,?)";
+            st= con.prepareStatement(sql);
+            for (Object[] b : driver_data){
+                st.setString(1, (String)b[0]);
+                st.setInt(2, (Integer)b[1]);
+                st.setString(3, (String)b[2]);
+                st.setDouble(4, (Double)b[3]);
+                st.setDouble(5, (Double)b[4]);
+                st.setString(6, (String)b[5]);
+                st.setInt(7, (Integer)b[6]);
+                st.setInt(8, (Integer)b[7]);
                 st.execute();
             }
 //            st.executeBatch();
