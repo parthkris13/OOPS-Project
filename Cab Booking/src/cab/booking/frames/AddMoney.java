@@ -5,18 +5,27 @@
  */
 package cab.booking.frames;
 import cab.booking.frames.UserProfile;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author PARTH KRISHNA SHARMA
  */
 public class AddMoney extends javax.swing.JFrame {
-
+    
+    Connection con=null;
+    ResultSet rs=null;
+    PreparedStatement pst=null;
+    int walletadd;
     /**
      * Creates new form AddMoney
      */
     public AddMoney() {
         initComponents();
+        
     }
 
     /**
@@ -103,6 +112,48 @@ public class AddMoney extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try
+        {
+            con = test.connectToDB();
+            //getting amount added
+            walletadd = Integer.parseInt((jTextField1.getText()));
+            //inserting new value into table
+            String query = "select wallet from users where userid = ?";
+            pst = con.prepareStatement(query);
+            pst.setInt(1 ,Integer.parseInt(LogIn.current_id));
+            rs = pst.executeQuery();
+            //int balance = rs.getInt(6);
+            walletadd+= rs.getInt("wallet");
+            con.close();
+            
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null,e);
+        }
+        try
+        {
+            con = test.connectToDB();
+            con.setAutoCommit(false);
+            String query2 = "update users set wallet =  ? where userid = ?";
+            pst = con.prepareStatement(query2);
+            pst.setInt(1 ,walletadd);
+            pst.setInt(2 ,Integer.parseInt((LogIn.current_id)));
+            JOptionPane.showMessageDialog(null, "success1");
+            // query = "update users set wallet = 'wallet+ " +walletadd+ " 'where userid ='"+LogIn.current_id+"'";  
+            
+            //rs = pst.executeQuery();
+
+            pst.executeUpdate();
+            con.commit();
+//            pst.executeUpdate();
+              JOptionPane.showMessageDialog(null, "success2");
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null,e);
+            //con.rollback();
+        }
         UserProfile up1 = new UserProfile();
         up1.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed

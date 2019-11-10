@@ -5,6 +5,10 @@
  */
 package cab.booking.frames;
 import cab.booking.frames.Home;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,8 +19,14 @@ public class LogIn extends javax.swing.JFrame {
     /**
      * Creates new form LogIn
      */
+    public static String current_id;
+    Connection con=null;
+    PreparedStatement pst=null;
+    ResultSet rs=null;
+    
     public LogIn() {
         initComponents();
+        con = test.connectToDB();
     }
 
     /**
@@ -121,8 +131,36 @@ public class LogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Home home = new Home();
-        home.setVisible(true);
+        String pass = password.getText();
+        try
+        {
+            //storing current user
+            current_id = userid.getText();
+            //query to get userid and pasword from database
+            String query = "Select userid,pswrd from users where userid='"+userid.getText()+"'";
+            pst = con.prepareStatement(query);
+            rs = pst.executeQuery();
+            //checking if password is valid
+            if(pass.equals(rs.getString("pswrd")))
+            {
+                JOptionPane.showMessageDialog(null, "Login Successful");
+                Home home = new Home();
+                home.setVisible(true);
+            }
+            else
+            {
+                LogIn lg = new LogIn();
+                lg.setVisible(true);
+                JOptionPane.showMessageDialog(null, "Please recheck password");
+            }
+            con.close();
+    
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
