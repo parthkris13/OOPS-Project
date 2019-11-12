@@ -7,13 +7,21 @@ package cab.booking.frames;
 import cab.booking.frames.BkgCnf;
 import cab.booking.frames.UserProfile;
 import cab.booking.frames.AddMoney;
-
+import javax.swing.JOptionPane;
+import cab.booking.frames.test;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.*;
 /**
  *
  * @author PARTH KRISHNA SHARMA
  */
 public class Home extends javax.swing.JFrame {
-
+    Connection conn=null;
+    PreparedStatement pstmt=null;
+    ResultSet rs=null;
+    String source;
     /**
      * Creates new form Home
      */
@@ -55,9 +63,13 @@ public class Home extends javax.swing.JFrame {
         jLabel3.setText("Source");
 
         jComboBox2.setBackground(new java.awt.Color(255, 255, 0));
-        jComboBox2.setForeground(new java.awt.Color(0, 0, 0));
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Choose Destination", "Mumbai", "Delhi", "Hyderabad", "Pune", "Bangalore" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Choose Destination", "BPHC", "Begumpet", "Airport", "Jubilee Hills", "Secunderabad Station" }));
         jComboBox2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Find my Ride");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -67,9 +79,13 @@ public class Home extends javax.swing.JFrame {
         });
 
         jComboBox3.setBackground(new java.awt.Color(255, 255, 0));
-        jComboBox3.setForeground(new java.awt.Color(0, 0, 0));
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Choose Source", "Mumbai", "Delhi", "Hyderabad", "Pune", "Bangalore" }));
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Choose Source", "BPHC", "Begumpet", "Airport", "Jubilee Hills", "Secunderabad Station" }));
         jComboBox3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Log Out");
 
@@ -165,9 +181,88 @@ public class Home extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+//    int getDriver(){
+//        
+//    }
+    private int chooseDriver(int m){
+        float max=0;
+        int driv_id=0;
+        try{
+            conn=test.connectToDB();
+            String sql="select * from drivers where cloc_ID=? and free=0";
+            pstmt= conn.prepareStatement(sql);
+            pstmt.setInt(1,m);
+            rs=pstmt.executeQuery();
+            while(rs.next()){
+                float rating = rs.getFloat(4);
+                int id = rs.getInt(2);
+                JOptionPane.showMessageDialog(null, rating);
+                if(rating > max){
+                        max = rating;
+                        //JOptionPane.showMessageDialog(null, max);
+                        driv_id = id;
+                        //JOptionPane.showMessageDialog(null, driv_id);
+                    }
+            }
+            return driv_id;
+            
+            
+        } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+            return 0;
+        }
+        
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        try{
+            conn=test.connectToDB();
+            String sql="select loc_id, dest_id, Distance from locations where src_loc=? order by Distance asc";
+            pstmt= conn.prepareStatement(sql);
+            pstmt.setString(1,source);
+//            JOptionPane.showMessageDialog(null,source);
+            rs=pstmt.executeQuery();
+            int[][] array= new int[5][2];
+            array[0][0]=rs.getInt("loc_id");
+            array[0][1]=0;
+//            JOptionPane.showMessageDialog(null,array[0][0]);
+            int i=1;
+            
+            while(rs.next()){
+                
+                   array[i][0]= rs.getInt("dest_id");
+                   array[i][1]= rs.getInt("Distance");
+//                JOptionPane.showMessageDialog(null,"id= " + rs.getInt("dest_id"));
+//                   JOptionPane.showMessageDialog(null,"dist= " + rs.getInt("Distance"));
+//                   JOptionPane.showMessageDialog(null,"i= " + i);
+                   i+=1;
+                
+            }
+            int k=0;
+            for (int z=0; z<5; z++){
+//                JOptionPane.showMessageDialog(null,array[z][0]);
+                  k=chooseDriver(array[z][0]);
+                  if (k!=0){
+                      break;
+                  }
+            }
+            JOptionPane.showMessageDialog(null, k);
+//            JOptionPane.showMessageDialog(null,array[2][1]);
+//            for (int z=0; z<5; z++){
+//                for (int j=0; j<2; j++){
+//                    JOptionPane.showMessageDialog(null,array[z][j]);
+//                }
+//            }
+              
+//            JOptionPane.showMessageDialog(null, rs.getInt("loc_id"));
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        
+        
         BkgCnf bc = new BkgCnf();
-        bc.setVisible(true);// TODO add your handling code here:
+        bc.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -179,6 +274,16 @@ public class Home extends javax.swing.JFrame {
         AddMoney am1 = new AddMoney();
         am1.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        // TODO add your handling code here:
+       source= (String)jComboBox3.getSelectedItem();
+    }//GEN-LAST:event_jComboBox3ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        String destination= (String)jComboBox2.getSelectedItem();  
+//        JOptionPane.showMessageDialog(null,destination);// TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
      * @param args the command line arguments
