@@ -14,6 +14,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
 import cab.booking.frames.LogIn;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  *
  * @author PARTH KRISHNA SHARMA
@@ -217,7 +222,7 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        int k=0;
         try{
             conn=test.connectToDB();
             String sql="select loc_id, dest_id, Distance from locations where src_loc=? order by Distance asc";
@@ -241,7 +246,7 @@ public class Home extends javax.swing.JFrame {
                    i+=1;
                 
             }
-            int k=0;
+            
             for (int z=0; z<5; z++){
 //                JOptionPane.showMessageDialog(null,array[z][0]);
                   k=chooseDriver(array[z][0]);
@@ -250,19 +255,56 @@ public class Home extends javax.swing.JFrame {
                   }
             }
             JOptionPane.showMessageDialog(null, k);
-//            JOptionPane.showMessageDialog(null,array[2][1]);
-//            for (int z=0; z<5; z++){
-//                for (int j=0; j<2; j++){
-//                    JOptionPane.showMessageDialog(null,array[z][j]);
-//                }
-//            }
-              
-//            JOptionPane.showMessageDialog(null, rs.getInt("loc_id"));
+//          
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
         
+        conn = test.connectToDB();
+        String sql ="update users set driver_assigned=? where userID = ?" ;
+        try{
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, k);
+            pstmt.setString(2, LogIn.current_id);
+            pstmt.executeUpdate();
+        } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+//        Date date = new Date();
+////        LocalTime time = LocalTime.now(); 
+//        String date_format = "hh:mm:ss a";
+//        DateFormat dateFormat = new SimpleDateFormat(date_format);
+//        String formattedDate = dateFormat.format(date);
+//        JOptionPane.showMessageDialog(null,formattedDate);
+//        Date dateAdded = new Date();
+//        dateAdded = date.setTime(date.getTime() + 5000);
+            
+
+//          Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+//          calendar.add(Calendar.SECOND, 5);
+////          JOptionPane.showMessageDialog(null,calendar.getTime());
+//          calendar.add(Calendar.MINUTE,5);
+////          JOptionPane.showMessageDialog(null,calendar.getTime());
+//          
+//          Date date=calendar.getTime();
+//          DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//          String formattedDate=dateFormat.format(date);
+//          JOptionPane.showMessageDialog(null, formattedDate);
+//          
+//          conn = test.connectToDB();
+//          sql ="update users set busy_till=? where userID = ?" ;
+//          try{
+//            pstmt = conn.prepareStatement(sql);
+//            pstmt.setInt(1, Integer.parseInt(formattedDate));
+//            pstmt.setString(2, LogIn.current_id);
+//            pstmt.executeUpdate();
+//          } catch(SQLException e){
+//            JOptionPane.showMessageDialog(null,e);
+//        }
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+//        System.out.println(time.format(formatter));
         
+       
         BkgCnf bc = new BkgCnf();
         bc.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed

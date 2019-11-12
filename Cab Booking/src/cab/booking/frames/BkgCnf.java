@@ -4,19 +4,73 @@
  * and open the template in the editor.
  */
 package cab.booking.frames;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import cab.booking.frames.test;
+import cab.booking.frames.LogIn;
 
 /**
  *
  * @author PARTH KRISHNA SHARMA
  */
 public class BkgCnf extends javax.swing.JFrame {
-
+    Connection conn;
+    PreparedStatement pst=null;
+    ResultSet rs;
+    int t1, cID, driv;
     /**
      * Creates new form BkgCnf
      */
     public BkgCnf() {
         initComponents();
-//        jLabel9.setText(source);
+        conn = test.connectToDB();
+        String ul="", ud="";
+        String sql = "select src,dest,driver_assigned from users where userID=?";
+        try{
+            pst=conn.prepareStatement(sql);
+            pst.setInt(1, Integer.parseInt(LogIn.current_id));
+            rs= pst.executeQuery();
+            ul=rs.getString("src");
+            jLabel9.setText(ul);
+            ud = rs.getString("dest");
+            jLabel10.setText(ud);
+            driv=rs.getInt("driver_assigned");
+            conn.close();
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        conn = test.connectToDB(); 
+        sql = "select fare,time from locations where src_loc=? and dest_loc=?";
+        try{
+            pst=conn.prepareStatement(sql);
+            pst.setString(1, ul);
+            pst.setString(2, ud);
+            rs= pst.executeQuery();
+            jLabel12.setText(rs.getInt("fare")+"");
+            t1= rs.getInt("time");
+            conn.close();
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        
+        conn = test.connectToDB(); 
+        sql = "select username,phone_num,rating,cloc_ID from drivers where driverID=?";
+        try{
+            pst=conn.prepareStatement(sql);
+            pst.setInt(1, driv);
+            rs= pst.executeQuery();
+            jLabel13.setText(rs.getString("username")+"");
+            jLabel14.setText(rs.getInt("phone_num")+"");
+            jLabel15.setText(rs.getFloat("rating")+"");
+            conn.close();
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
     }
 
     /**

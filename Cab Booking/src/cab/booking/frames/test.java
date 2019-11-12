@@ -15,14 +15,10 @@ public class test {
    public static Connection connectToDB(){
       try {
          Class.forName("org.sqlite.JDBC");
-<<<<<<< HEAD
          Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/sheyril/Desktop/OOPS-Project/lib/test.db");
 
          
-=======
 
-        Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/manishakatariya/Desktop/OOPS-Project/lib/test.db");
->>>>>>> 4324176dc687c6c0debc730c60facb1b49cc9a02
 //         JOptionPane.showMessageDialog(null,"Connected");
          return con;
       } catch ( Exception e ) {
@@ -153,44 +149,44 @@ public class test {
              JOptionPane.showMessageDialog(null,e);
          }
          
-         Object[][] driver_data={
-             {"Rahul", 1, "Begumpet", 4.3, 9985734216d, "rahul@gmail.com", 0, 0,4},
-             {"Chetan", 2, "Jubilee Hills", 4.1, 9985254276d, "chetan@gmail.com", 0, 0,2},
-             {"Raghav", 3, "Secunderabad Station", 4.0, 9865734216d, "raghav@gmail.com", 0, 0,1},
-             {"Rakesh", 4, "BPHC", 3.8, 9185734317d, "rakesh@gmail.com", 0, 0,3},
-             {"Priya", 5, "Begumpet", 4.7, 9985736244d, "priya@gmail.com", 0, 0,4},
-             {"Jahnvi", 6, "BPHC", 4.3, 9985167216d, "jahnvi@gmail.com", 0, 0,3},
-             {"Moolchand", 7, "Airport", 4.8, 9785734919d, "moolchand@gmail.com", 0, 0,5},
-             {"Shaurya", 8, "Jubilee Hills", 3.5, 9685824210d, "shaurya@gmail.com", 0, 0,2},
-             {"Nikita", 9, "Secunderabad Station", 4.3, 9763834216d, "nikita@gmail.com", 0, 0,1},
-             {"Sohaib", 10, "Airport", 4.8, 9743634237d, "sohaib@gmail.com", 0, 0,5}
-         };
-         try{
-            String sql = "insert into drivers values (?,?,?,?,?,?,?,?,?)";
-            st= con.prepareStatement(sql);
-            for (Object[] b : driver_data){
-                st.setString(1, (String)b[0]);
-                st.setInt(2, (Integer)b[1]);
-                st.setString(3, (String)b[2]);
-                st.setDouble(4, (Double)b[3]);
-                st.setDouble(5, (Double)b[4]);
-                st.setString(6, (String)b[5]);
-                st.setInt(7, (Integer)b[6]);
-                st.setInt(8, (Integer)b[7]);
-                st.setInt(9, (Integer)b[8]);
-                st.execute();
-            }
-//            st.executeBatch();
-//            st.close();
-         }catch(Exception e){
-             JOptionPane.showMessageDialog(null,e);
-         }
+//         Object[][] driver_data={
+//             {"Rahul", 1, "Begumpet", 4.3, 9985734216d, "rahul@gmail.com", 0, 0,4},
+//             {"Chetan", 2, "Jubilee Hills", 4.1, 9985254276d, "chetan@gmail.com", 0, 0,2},
+//             {"Raghav", 3, "Secunderabad Station", 4.0, 9865734216d, "raghav@gmail.com", 0, 0,1},
+//             {"Rakesh", 4, "BPHC", 3.8, 9185734317d, "rakesh@gmail.com", 0, 0,3},
+//             {"Priya", 5, "Begumpet", 4.7, 9985736244d, "priya@gmail.com", 0, 0,4},
+//             {"Jahnvi", 6, "BPHC", 4.3, 9985167216d, "jahnvi@gmail.com", 0, 0,3},
+//             {"Moolchand", 7, "Airport", 4.8, 9785734919d, "moolchand@gmail.com", 0, 0,5},
+//             {"Shaurya", 8, "Jubilee Hills", 3.5, 9685824210d, "shaurya@gmail.com", 0, 0,2},
+//             {"Nikita", 9, "Secunderabad Station", 4.3, 9763834216d, "nikita@gmail.com", 0, 0,1},
+//             {"Sohaib", 10, "Airport", 4.8, 9743634237d, "sohaib@gmail.com", 0, 0,5}
+//         };
+//         try{
+//            String sql = "insert into drivers values (?,?,?,?,?,?,?,?,?)";
+//            st= con.prepareStatement(sql);
+//            for (Object[] b : driver_data){
+//                st.setString(1, (String)b[0]);
+//                st.setInt(2, (Integer)b[1]);
+//                st.setString(3, (String)b[2]);
+//                st.setDouble(4, (Double)b[3]);
+//                st.setDouble(5, (Double)b[4]);
+//                st.setString(6, (String)b[5]);
+//                st.setInt(7, (Integer)b[6]);
+//                st.setInt(8, (Integer)b[7]);
+//                st.setInt(9, (Integer)b[8]);
+//                st.execute();
+//            }
+////            st.executeBatch();
+////            st.close();
+//         }catch(Exception e){
+//             JOptionPane.showMessageDialog(null,e);
+//         }
    }
 
    public static void main( String args[] ) {
 //      createTableUsers();
 //      createTableDrivers();
 //      createTableLocations();
-//      populate();
+      populate();
    }
 }
