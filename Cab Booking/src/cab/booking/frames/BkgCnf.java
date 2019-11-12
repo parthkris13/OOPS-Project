@@ -16,6 +16,7 @@ public class BkgCnf extends javax.swing.JFrame {
      */
     public BkgCnf() {
         initComponents();
+//        jLabel9.setText(source);
     }
 
     /**

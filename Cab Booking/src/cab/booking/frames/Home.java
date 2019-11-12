@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.*;
+import cab.booking.frames.LogIn;
 /**
  *
  * @author PARTH KRISHNA SHARMA
@@ -21,7 +22,8 @@ public class Home extends javax.swing.JFrame {
     Connection conn=null;
     PreparedStatement pstmt=null;
     ResultSet rs=null;
-    String source;
+    public String source;
+    public String destination;
     /**
      * Creates new form Home
      */
@@ -196,7 +198,7 @@ public class Home extends javax.swing.JFrame {
             while(rs.next()){
                 float rating = rs.getFloat(4);
                 int id = rs.getInt(2);
-                JOptionPane.showMessageDialog(null, rating);
+                //JOptionPane.showMessageDialog(null, rating);
                 if(rating > max){
                         max = rating;
                         //JOptionPane.showMessageDialog(null, max);
@@ -278,11 +280,31 @@ public class Home extends javax.swing.JFrame {
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
         // TODO add your handling code here:
        source= (String)jComboBox3.getSelectedItem();
+       conn = test.connectToDB();
+       String sql ="update users set src=? where userID = ?" ;
+       try{
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, source);
+        pstmt.setString(2, LogIn.current_id);
+        pstmt.executeUpdate();
+       } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+       }
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         String destination= (String)jComboBox2.getSelectedItem();  
-//        JOptionPane.showMessageDialog(null,destination);// TODO add your handling code here:
+        conn = test.connectToDB();
+        String sql ="update users set dest=? where userID = ?" ;
+       try{
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, destination);
+        pstmt.setString(2, LogIn.current_id);
+        pstmt.executeUpdate();
+       } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+       }
+
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
