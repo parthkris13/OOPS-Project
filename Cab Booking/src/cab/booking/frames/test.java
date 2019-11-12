@@ -15,9 +15,14 @@ public class test {
    public static Connection connectToDB(){
       try {
          Class.forName("org.sqlite.JDBC");
+<<<<<<< HEAD
          Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/sheyril/Desktop/OOPS-Project/lib/test.db");
 
          
+=======
+
+        Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/manishakatariya/Desktop/OOPS-Project/lib/test.db");
+>>>>>>> 4324176dc687c6c0debc730c60facb1b49cc9a02
 //         JOptionPane.showMessageDialog(null,"Connected");
          return con;
       } catch ( Exception e ) {

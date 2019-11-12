@@ -5,6 +5,12 @@
  */
 package cab.booking.frames;
 import cab.booking.frames.AddMoney;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import cab.booking.frames.LogIn;
+import cab.booking.frames.Home;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,8 +21,30 @@ public class UserProfile extends javax.swing.JFrame {
     /**
      * Creates new form UserDetails
      */
+    Connection con=null;
+    ResultSet rs=null;
+    PreparedStatement pst=null;
     public UserProfile() {
         initComponents();
+        con = test.connectToDB();
+        try{
+            //query to get user details from database
+            String query = "select username, userid, phone_num, wallet from users where userid = ?";
+            pst = con.prepareStatement(query);
+            pst.setInt(1 ,Integer.parseInt(LogIn.current_id));
+            rs = pst.executeQuery();
+            String username = rs.getString("username");
+            String phone = Integer.toString(rs.getInt("phone_num"));
+            String wallet = Integer.toString(rs.getInt("wallet"));
+            jLabel9.setText(username); 
+            jLabel10.setText(LogIn.current_id);
+            jLabel11.setText(phone);
+            jLabel12.setText(wallet);
+            con.close();
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null,e);
+        }
     }
 
     /**
@@ -174,10 +202,13 @@ public class UserProfile extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-                // TODO add your handling code here:
+            //new home instance is created and page is displayed
+            Home h = new Home();
+            h.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //new add money instance is created and page is displayed
         AddMoney am2 = new AddMoney();
         am2.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
