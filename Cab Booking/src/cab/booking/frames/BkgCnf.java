@@ -13,6 +13,12 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import cab.booking.frames.test;
 import cab.booking.frames.LogIn;
+import cab.booking.frames.FinishRide;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 
 /**
  *
@@ -22,14 +28,15 @@ public class BkgCnf extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst=null;
     ResultSet rs;
-    int t1, cID, driv;
+    int t1, cID, driv, t2, clID;
+    String formattedDate;
     /**
      * Creates new form BkgCnf
      */
     public BkgCnf() {
         initComponents();
         conn = test.connectToDB();
-        String ul="", ud="";
+        String ul="", ud="", dc="";
         String sql = "select src,dest,driver_assigned from users where userID=?";
         try{
             pst=conn.prepareStatement(sql);
@@ -44,26 +51,14 @@ public class BkgCnf extends javax.swing.JFrame {
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
-        conn = test.connectToDB(); 
-        sql = "select fare,time from locations where src_loc=? and dest_loc=?";
-        try{
-            pst=conn.prepareStatement(sql);
-            pst.setString(1, ul);
-            pst.setString(2, ud);
-            rs= pst.executeQuery();
-            jLabel12.setText(rs.getInt("fare")+"");
-            t1= rs.getInt("time");
-            conn.close();
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null,e);
-        }
         
         conn = test.connectToDB(); 
-        sql = "select username,phone_num,rating,cloc_ID from drivers where driverID=?";
+        sql = "select username,phone_num,rating,cloc_ID, driver_loc from drivers where driverID=?";
         try{
             pst=conn.prepareStatement(sql);
             pst.setInt(1, driv);
             rs= pst.executeQuery();
+            dc = rs.getString("driver_loc");
             jLabel13.setText(rs.getString("username")+"");
             jLabel14.setText(rs.getInt("phone_num")+"");
             jLabel15.setText(rs.getFloat("rating")+"");
@@ -71,8 +66,103 @@ public class BkgCnf extends javax.swing.JFrame {
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
-    }
+        
+        
+        conn = test.connectToDB(); 
+        sql = "select fare,time, dest_id from locations where src_loc=? and dest_loc=?";
+        try{
+            pst=conn.prepareStatement(sql);
+            pst.setString(1, ul);
+            pst.setString(2, ud);
+            rs= pst.executeQuery();
+            clID = rs.getInt("dest_id");
+            jLabel12.setText(rs.getInt("fare")+"");
+            t1= rs.getInt("time");
+            conn.close();
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        if (ul.equals(dc)){
+            t2=0;
+        }
+        else{
+            conn = test.connectToDB(); 
+            sql = "select time from locations where src_loc=? and dest_loc=?";
+            try{
+                pst=conn.prepareStatement(sql);
+                pst.setString(1, dc);
+                pst.setString(2, ul);
+                rs= pst.executeQuery();
+//                jLabel12.setText(rs.getInt("fare")+"");
+                t2= rs.getInt("time");
+                conn.close();
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(null,e);
+            }
+        }
+//        Calendar calendar1 = Calendar.getInstance();
+//        Date date1=calendar1.getTime();
+//        DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
+//        String formattedDate1=dateFormat1.format(date1);
+//        JOptionPane.showMessageDialog(null,formattedDate1);
+         
+        Calendar calendar = Calendar.getInstance();  // gets a calendar using the default time zone and locale.
+        calendar.add(Calendar.SECOND, t1+t2);      
+        Date date=calendar.getTime();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        formattedDate=dateFormat.format(date);
+        
+    
+        conn = test.connectToDB();
+        sql ="update users set busy_till=?, free_at=? where userID = ?" ;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, formattedDate);
+            pst.setInt(2, 1);
+            pst.setString(3, LogIn.current_id);
+            pst.executeUpdate();
+            conn.close();
+          } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        jLabel11.setText(formattedDate);
+//        conn = test.connectToDB();
+//        sql = "select busy_till from users where userID=?";
+//        try{
+//            pst=conn.prepareStatement(sql);
+//            pst.setInt(1, Integer.parseInt(LogIn.current_id));
+//            rs= pst.executeQuery();
+//            //ul=rs.getString("src");
+//            jLabel11.setText(rs.getString("busy_till"));
+//            //ud = rs.getString("dest");
+//            //jLabel10.setText(ud);
+//            //driv=rs.getInt("driver_assigned");
+//            conn.close();
+//        }catch(SQLException e){
+//            JOptionPane.showMessageDialog(null,e);
+//        }
+//        
+        conn = test.connectToDB();
+        sql ="update drivers set busy_till=?, cloc_ID=?, free=? where driverID = ?" ;
+        try{
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, formattedDate);
+            pst.setInt(2, clID);
+            pst.setInt(3, 1);
+            pst.setInt(4, driv);
+            pst.executeUpdate();
+            conn.close();
+          } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
 
+
+
+    }
+    
+    
+    
+    //JOptionPane.showMessageDialog(null, formattedDate);
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,6 +188,7 @@ public class BkgCnf extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -163,6 +254,13 @@ public class BkgCnf extends javax.swing.JFrame {
         jLabel15.setText("Driver Rating");
         jLabel15.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 0)));
 
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -174,23 +272,26 @@ public class BkgCnf extends javax.swing.JFrame {
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(92, 92, 92)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(52, 52, 52)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(52, 52, 52)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
                 .addContainerGap(169, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -226,7 +327,9 @@ public class BkgCnf extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -242,6 +345,20 @@ public class BkgCnf extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Calendar calendar1 = Calendar.getInstance();
+        Date date1=calendar1.getTime();
+        DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
+        String formattedDate1=dateFormat1.format(date1);
+        JOptionPane.showMessageDialog(null,formattedDate);
+        if(formattedDate1.compareTo(formattedDate)>=0){
+            JOptionPane.showMessageDialog(null,formattedDate1);
+            FinishRide fr=new FinishRide(); 
+            fr.setVisible(true);
+        }
+//        JOptionPane.showMessageDialog(null,formattedDate1);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -279,6 +396,7 @@ public class BkgCnf extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

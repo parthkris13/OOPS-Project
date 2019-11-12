@@ -38,6 +38,9 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" red="0" type="rgb"/>
         </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="99" type="rgb"/>
+        </Property>
       </Properties>
 
       <Layout>
@@ -46,27 +49,32 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jLabel1" min="-2" pref="269" max="-2" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel2" alignment="0" min="-2" pref="139" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="120" max="-2" attributes="0"/>
+                                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jTextField2" pref="72" max="32767" attributes="0"/>
-                                  <Component id="jTextField1" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="jLabel1" alignment="0" min="-2" pref="302" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace pref="114" max="32767" attributes="0"/>
                       </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="jButton2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="120" max="-2" attributes="0"/>
-                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel2" alignment="0" min="-2" pref="139" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jTextField2" min="-2" pref="72" max="-2" attributes="0"/>
+                              <Component id="jTextField1" min="-2" pref="72" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="114" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -79,8 +87,9 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButton3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
@@ -109,6 +118,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="66" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Kindly Rate your driver"/>
           </Properties>
         </Component>
@@ -124,6 +136,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="66" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Updated Wallet Balance"/>
           </Properties>
         </Component>
@@ -137,10 +152,13 @@
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="0" green="0" red="cc" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Log Out"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
@@ -148,10 +166,21 @@
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="0" green="ff" red="33" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Book Another Cab"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButton3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Submit"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

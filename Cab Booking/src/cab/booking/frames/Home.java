@@ -223,14 +223,16 @@ public class Home extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         int k=0;
+        int f=0;
         try{
             conn=test.connectToDB();
-            String sql="select loc_id, dest_id, Distance from locations where src_loc=? order by Distance asc";
+            String sql="select loc_id, dest_id, Distance,fare from locations where src_loc=? order by Distance asc";
             pstmt= conn.prepareStatement(sql);
             pstmt.setString(1,source);
 //            JOptionPane.showMessageDialog(null,source);
             rs=pstmt.executeQuery();
             int[][] array= new int[5][2];
+            f=rs.getInt("fare");
             array[0][0]=rs.getInt("loc_id");
             array[0][1]=0;
 //            JOptionPane.showMessageDialog(null,array[0][0]);
@@ -261,12 +263,14 @@ public class Home extends javax.swing.JFrame {
         }
         
         conn = test.connectToDB();
-        String sql ="update users set driver_assigned=? where userID = ?" ;
+        String sql ="update users set driver_assigned=?, fare=? where userID = ?" ;
         try{
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, k);
-            pstmt.setString(2, LogIn.current_id);
+            pstmt.setInt(2, f);
+            pstmt.setInt(3, Integer.parseInt(LogIn.current_id));
             pstmt.executeUpdate();
+            conn.close();
         } catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
@@ -282,20 +286,17 @@ public class Home extends javax.swing.JFrame {
 
 //          Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
 //          calendar.add(Calendar.SECOND, 5);
-////          JOptionPane.showMessageDialog(null,calendar.getTime());
-//          calendar.add(Calendar.MINUTE,5);
-////          JOptionPane.showMessageDialog(null,calendar.getTime());
-//          
+//          calendar.add(Calendar.MINUTE,5);     
 //          Date date=calendar.getTime();
 //          DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 //          String formattedDate=dateFormat.format(date);
 //          JOptionPane.showMessageDialog(null, formattedDate);
-//          
+          
 //          conn = test.connectToDB();
 //          sql ="update users set busy_till=? where userID = ?" ;
 //          try{
 //            pstmt = conn.prepareStatement(sql);
-//            pstmt.setInt(1, Integer.parseInt(formattedDate));
+//            pstmt.setString(1, formattedDate);
 //            pstmt.setString(2, LogIn.current_id);
 //            pstmt.executeUpdate();
 //          } catch(SQLException e){

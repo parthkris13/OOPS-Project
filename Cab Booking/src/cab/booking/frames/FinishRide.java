@@ -4,20 +4,61 @@
  * and open the template in the editor.
  */
 package cab.booking.frames;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author PARTH KRISHNA SHARMA
  */
 public class FinishRide extends javax.swing.JFrame {
-
+    Connection con=null;
+    ResultSet rs=null;
+    PreparedStatement pst=null;
     /**
      * Creates new form FinishRide
      */
     public FinishRide() {
+        
         initComponents();
+        int new_balance = 0;
+        try
+        {
+            con = test.connectToDB();
+            //fare driver_assigned
+            String query = "select wallet, fare from users where userid = ?";
+            pst = con.prepareStatement(query);
+            pst.setInt(1 ,Integer.parseInt((LogIn.current_id)));
+            rs = pst.executeQuery();
+            new_balance = rs.getInt("wallet") - rs.getInt("fare");
+            jTextField2.setText(new_balance+"");
+            con.close();
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null,e);
+        }
+        try
+        {
+            con = test.connectToDB();
+            String query2 = "update users set wallet =  ?, free_at = ?, fare = ?  where userid = ?";
+            pst = con.prepareStatement(query2);
+            pst.setInt(1 ,new_balance);
+            pst.setInt(2 ,0);
+            pst.setInt(3 ,0);
+            pst.setInt(4 ,Integer.parseInt((LogIn.current_id)));
+            pst.executeUpdate();
+            con.close();
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null,e);
+        }
+    
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,30 +76,51 @@ public class FinishRide extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel1.setForeground(new java.awt.Color(153, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Thanks for Travelling with us!");
 
+        jLabel2.setForeground(new java.awt.Color(102, 255, 255));
         jLabel2.setText("Kindly Rate your driver");
 
         jTextField1.setBackground(new java.awt.Color(255, 255, 0));
         jTextField1.setForeground(new java.awt.Color(255, 255, 51));
 
+        jLabel3.setForeground(new java.awt.Color(102, 255, 255));
         jLabel3.setText("Updated Wallet Balance");
 
         jTextField2.setBackground(new java.awt.Color(255, 255, 0));
 
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setForeground(new java.awt.Color(204, 0, 0));
         jButton1.setText("Log Out");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(0, 0, 0));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setForeground(new java.awt.Color(51, 255, 0));
         jButton2.setText("Book Another Cab");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Submit");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -67,21 +129,25 @@ public class FinishRide extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(60, 60, 60)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-                                .addComponent(jTextField1))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2)
-                        .addGap(120, 120, 120)
-                        .addComponent(jButton1)))
-                .addContainerGap(114, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addGap(120, 120, 120)
+                                .addComponent(jButton1))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(114, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(52, 52, 52)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addGap(56, 56, 56))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -91,8 +157,9 @@ public class FinishRide extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(49, 49, 49)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3))
+                .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -116,6 +183,48 @@ public class FinishRide extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        con = test.connectToDB();
+        String sql ="update users set free_at=? where userID = ?" ;
+        try{
+            pst = con.prepareStatement(sql);
+            pst.setInt(1,0);
+            pst.setString(2, LogIn.current_id);
+            pst.executeUpdate();
+            con.close();
+          } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        con = test.connectToDB();
+        String sql ="update users set free_at=? where userID = ?" ;
+        try{
+            pst = con.prepareStatement(sql);
+            pst.setInt(1,0);
+            pst.setString(2, LogIn.current_id);
+            pst.executeUpdate();
+            con.close();
+          } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        con = test.connectToDB();
+        String sql ="update users set free_at=? where userID = ?" ;
+        try{
+            pst = con.prepareStatement(sql);
+            pst.setInt(1,0);
+            pst.setString(2, LogIn.current_id);
+            pst.executeUpdate();
+            con.close();
+          } catch(SQLException e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -155,6 +264,7 @@ public class FinishRide extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
