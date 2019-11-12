@@ -233,7 +233,7 @@ public class Home extends javax.swing.JFrame {
                 
                    array[i][0]= rs.getInt("dest_id");
                    array[i][1]= rs.getInt("Distance");
-                JOptionPane.showMessageDialog(null,"id= " + rs.getInt("dest_id"));
+//                JOptionPane.showMessageDialog(null,"id= " + rs.getInt("dest_id"));
 //                   JOptionPane.showMessageDialog(null,"dist= " + rs.getInt("Distance"));
 //                   JOptionPane.showMessageDialog(null,"i= " + i);
                    i+=1;
