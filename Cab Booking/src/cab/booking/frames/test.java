@@ -15,13 +15,13 @@ public class test {
    public static Connection connectToDB(){
       try {
          Class.forName("org.sqlite.JDBC");
-         Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/sheyril/Desktop/OOPS-Project/lib/test.db");
+         Connection con = DriverManager.getConnection("jdbc:sqlite:/Users/sheyril/Desktop/OOPS-Project/test2.db ");
 
          
 
 //         JOptionPane.showMessageDialog(null,"Connected");
          return con;
-      } catch ( Exception e ) {
+      } catch (Exception e ) {
 //         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 //         System.exit(0);
            JOptionPane.showMessageDialog(null,e);
@@ -188,6 +188,6 @@ public class test {
 //      createTableUsers();
 //      createTableDrivers();
 //      createTableLocations();
-      populate();
+//      populate();
    }
 }

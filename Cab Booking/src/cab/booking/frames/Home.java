@@ -27,13 +27,89 @@ public class Home extends javax.swing.JFrame {
     Connection conn=null;
     PreparedStatement pstmt=null;
     ResultSet rs=null;
-    public String source;
-    public String destination;
+    public String source=null;
+    public String destination=null;
+    public static int k=0;
+                
     /**
      * Creates new form Home
      */
+    
+//    private void refreshDrivers(int m){
+//            String sql ="update drivers set free=? where driverID = ?" ;
+//            try{
+//                JOptionPane.showMessageDialog(null,m);
+//                pstmt = conn.prepareStatement(sql);
+//                pstmt.setInt(1, 0);
+//                pstmt.setInt(2,m);
+//                pstmt.executeUpdate();
+//                        
+//            } catch(SQLException e){
+//                JOptionPane.showMessageDialog(null,e);
+//            }
+//                   
+//    }
+    
     public Home() {
         initComponents();
+        
+//        
+//            conn = test.connectToDB();
+//            int[] arr = new int[10];
+//            int i=0;
+//            
+//            String sql ="select * from drivers" ;
+//            try{
+//                JOptionPane.showMessageDialog(null,"okay");
+//                pstmt = conn.prepareStatement(sql);
+////                pstmt.setInt(1, 0);
+////               JOptionPane.showMessageDialog(null,"okay2");
+//                rs = pstmt.executeQuery();
+//                JOptionPane.showMessageDialog(null,"okay3");
+//                Calendar calendar1 = Calendar.getInstance();
+//                Date date1=calendar1.getTime();
+//                DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
+//                String formattedDate1=dateFormat1.format(date1);
+//                while(rs.next()){
+//                    if (formattedDate1.compareTo(rs.getString("busy_till"))>=0){
+//                        //JOptionPane.showMessageDialog(null,"okay4");
+//                        arr[i]= rs.getInt("driverID");
+//                        i++;
+//                    }
+//                }
+//                //conn.close();
+////                conn = test.connectToDB();
+//                for (int j=0; j<i; j++){
+//                    int ID=arr[j];
+//                    refreshDrivers(ID);
+////                    sql ="update drivers set free=? where driverID = ?" ;
+////                    try{
+////                        JOptionPane.showMessageDialog(null,arr[j]);
+////                        pstmt = conn.prepareStatement(sql);
+////                        pstmt.setInt(1, 0);
+////                        pstmt.setInt(2, ID);
+////                        pstmt.executeUpdate();
+////                        
+////                    } catch(SQLException e){
+////                      JOptionPane.showMessageDialog(null,e);
+////                    }
+//                   
+//                } //conn.close();
+////                sql ="update drivers set free=? where driverID = ?" ;
+////                try{
+////                    pstmt = conn.prepareStatement(sql);
+////                    pstmt.setInt(1, 0);
+////                    pstmt.setInt(2, ID);
+////                    pstmt.executeUpdate();
+////             conn.close();
+////          } catch(SQLException e){
+////            JOptionPane.showMessageDialog(null,e);
+////        }
+//                
+////                conn.close();
+//          } catch(SQLException e){
+//            JOptionPane.showMessageDialog(null,e);
+//        }
     }
 
     /**
@@ -95,6 +171,11 @@ public class Home extends javax.swing.JFrame {
         });
 
         jButton2.setText("Log Out");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Add Money");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -196,21 +277,29 @@ public class Home extends javax.swing.JFrame {
         int driv_id=0;
         try{
             conn=test.connectToDB();
-            String sql="select * from drivers where cloc_ID=? and free=0";
+            String sql="select * from drivers where cloc_ID=? and free=?";
             pstmt= conn.prepareStatement(sql);
             pstmt.setInt(1,m);
+            pstmt.setInt(2,0);
             rs=pstmt.executeQuery();
             while(rs.next()){
                 float rating = rs.getFloat(4);
                 int id = rs.getInt(2);
+//                Calendar calendar = Calendar.getInstance();  // gets a calendar using the default time zone and locale.
+//                Date date=calendar.getTime();
+//                DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+//                String formattedDate = dateFormat.format(date);
                 //JOptionPane.showMessageDialog(null, rating);
-                if(rating > max){
-                        max = rating;
-                        //JOptionPane.showMessageDialog(null, max);
-                        driv_id = id;
-                        //JOptionPane.showMessageDialog(null, driv_id);
-                    }
+//                if(formattedDate.compareTo(rs.getString("busy_till"))>0){
+                        if(rating > max){
+                                max = rating;
+                                //JOptionPane.showMessageDialog(null, max);
+                                driv_id = id;
+                                //JOptionPane.showMessageDialog(null, driv_id);
+                            }
+//                }
             }
+            conn.close();
             return driv_id;
             
             
@@ -222,95 +311,139 @@ public class Home extends javax.swing.JFrame {
     }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int k=0;
-        int f=0;
+        if (source==null || destination==null){
+            JOptionPane.showMessageDialog(null,"Please choose a Source and Destination");
+//            dispose();
+//            Home h = new Home();
+//            h.setVisible(true);
+        }
+        else{
+        conn=test.connectToDB();
+        int[][] array= new int[5][2];
+        String sql="select * from users where userID=? ";
         try{
-            conn=test.connectToDB();
-            String sql="select loc_id, dest_id, Distance,fare from locations where src_loc=? order by Distance asc";
             pstmt= conn.prepareStatement(sql);
-            pstmt.setString(1,source);
-//            JOptionPane.showMessageDialog(null,source);
+            pstmt.setInt(1, Integer.parseInt(LogIn.current_id));
             rs=pstmt.executeQuery();
-            int[][] array= new int[5][2];
-            f=rs.getInt("fare");
-            array[0][0]=rs.getInt("loc_id");
-            array[0][1]=0;
-//            JOptionPane.showMessageDialog(null,array[0][0]);
-            int i=1;
-            
-            while(rs.next()){
+            if (rs.getInt("wallet")<300){
+                JOptionPane.showMessageDialog(null,"Your wallet balance it too low");
+                AddMoney am = new AddMoney();
+                am.setVisible(true);
+                conn.close();
                 
-                   array[i][0]= rs.getInt("dest_id");
-                   array[i][1]= rs.getInt("Distance");
-//                JOptionPane.showMessageDialog(null,"id= " + rs.getInt("dest_id"));
-//                   JOptionPane.showMessageDialog(null,"dist= " + rs.getInt("Distance"));
-//                   JOptionPane.showMessageDialog(null,"i= " + i);
-                   i+=1;
-                
-            }
-            
-            for (int z=0; z<5; z++){
-//                JOptionPane.showMessageDialog(null,array[z][0]);
-                  k=chooseDriver(array[z][0]);
-                  if (k!=0){
-                      break;
-                  }
-            }
-            JOptionPane.showMessageDialog(null, k);
-//          
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null,e);
-        }
-        
-        conn = test.connectToDB();
-        String sql ="update users set driver_assigned=?, fare=? where userID = ?" ;
-        try{
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, k);
-            pstmt.setInt(2, f);
-            pstmt.setInt(3, Integer.parseInt(LogIn.current_id));
-            pstmt.executeUpdate();
-            conn.close();
-        } catch(SQLException e){
-            JOptionPane.showMessageDialog(null,e);
-        }
-//        Date date = new Date();
-////        LocalTime time = LocalTime.now(); 
-//        String date_format = "hh:mm:ss a";
-//        DateFormat dateFormat = new SimpleDateFormat(date_format);
-//        String formattedDate = dateFormat.format(date);
-//        JOptionPane.showMessageDialog(null,formattedDate);
-//        Date dateAdded = new Date();
-//        dateAdded = date.setTime(date.getTime() + 5000);
-            
+            }  
+            else{
+                conn.close();
+                int f=0;
+                try{
+                    conn=test.connectToDB();
+                    sql="select loc_id, dest_id, Distance,fare from locations where src_loc=? order by Distance asc";
+                    pstmt= conn.prepareStatement(sql);
+                    pstmt.setString(1,source);
+        //            JOptionPane.showMessageDialog(null,source);
+                    rs=pstmt.executeQuery();
+                    
+                    f=rs.getInt("fare");
+                    array[0][0]=rs.getInt("loc_id");
+                    array[0][1]=0;
+        //            JOptionPane.showMessageDialog(null,array[0][0]);
+                    int i=1;
 
-//          Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-//          calendar.add(Calendar.SECOND, 5);
-//          calendar.add(Calendar.MINUTE,5);     
-//          Date date=calendar.getTime();
-//          DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-//          String formattedDate=dateFormat.format(date);
-//          JOptionPane.showMessageDialog(null, formattedDate);
-          
-//          conn = test.connectToDB();
-//          sql ="update users set busy_till=? where userID = ?" ;
-//          try{
-//            pstmt = conn.prepareStatement(sql);
-//            pstmt.setString(1, formattedDate);
-//            pstmt.setString(2, LogIn.current_id);
-//            pstmt.executeUpdate();
-//          } catch(SQLException e){
-//            JOptionPane.showMessageDialog(null,e);
-//        }
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-//        System.out.println(time.format(formatter));
-        
-       
-        BkgCnf bc = new BkgCnf();
-        bc.setVisible(true);
+                    while(rs.next()){
+
+                           array[i][0]= rs.getInt("dest_id");
+                           array[i][1]= rs.getInt("Distance");
+        //                JOptionPane.showMessageDialog(null,"id= " + rs.getInt("dest_id"));
+        //                   JOptionPane.showMessageDialog(null,"dist= " + rs.getInt("Distance"));
+        //                   JOptionPane.showMessageDialog(null,"i= " + i);
+                           i+=1;
+
+                    }
+                    }catch(SQLException se){
+                        JOptionPane.showMessageDialog(null,se);
+                    }
+
+                    for (int z=0; z<5; z++){
+        //                JOptionPane.showMessageDialog(null,array[z][0]);
+                          k=chooseDriver(array[z][0]);
+                          if (k!=0){
+                              break;
+                          }
+                    }
+                    if (k==0){
+                        JOptionPane.showMessageDialog(null, "No cabs available :(");
+                        dispose();
+                        Home h= new Home();
+                        h.setVisible(true);
+                    }
+                    else{
+                        try{
+                            JOptionPane.showMessageDialog(null, k);
+                            conn.close();
+
+                        }catch(SQLException se){
+                            JOptionPane.showMessageDialog(null,se);
+                        }
+
+                            conn = test.connectToDB();
+                            sql ="update users set driver_assigned=?, fare=? where userID = ?" ;
+                            try{
+                                pstmt = conn.prepareStatement(sql);
+                                pstmt.setInt(1, k);
+                                pstmt.setInt(2, f);
+                                pstmt.setInt(3, Integer.parseInt(LogIn.current_id));
+                                pstmt.executeUpdate();
+                                conn.close();
+                        } catch(SQLException e){
+                            JOptionPane.showMessageDialog(null,e);
+                        }
+
+                        BkgCnf bc = new BkgCnf();
+                        bc.setVisible(true);
+                            }
+//                        } catch(SQLException e){
+//                            JOptionPane.showMessageDialog(null,e);
+//                        }
+        //        Date date = new Date();
+        ////        LocalTime time = LocalTime.now(); 
+        //        String date_format = "hh:mm:ss a";
+        //        DateFormat dateFormat = new SimpleDateFormat(date_format);
+        //        String formattedDate = dateFormat.format(date);
+        //        JOptionPane.showMessageDialog(null,formattedDate);
+        //        Date dateAdded = new Date();
+        //        dateAdded = date.setTime(date.getTime() + 5000);
+
+
+        //          Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
+        //          calendar.add(Calendar.SECOND, 5);
+        //          calendar.add(Calendar.MINUTE,5);     
+        //          Date date=calendar.getTime();
+        //          DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        //          String formattedDate=dateFormat.format(date);
+        //          JOptionPane.showMessageDialog(null, formattedDate);
+
+        //          conn = test.connectToDB();
+        //          sql ="update users set busy_till=? where userID = ?" ;
+        //          try{
+        //            pstmt = conn.prepareStatement(sql);
+        //            pstmt.setString(1, formattedDate);
+        //            pstmt.setString(2, LogIn.current_id);
+        //            pstmt.executeUpdate();
+        //          } catch(SQLException e){
+        //            JOptionPane.showMessageDialog(null,e);
+        //        }
+        //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        //        System.out.println(time.format(formatter));
+            }
+         }
+        catch(SQLException e){
+                            JOptionPane.showMessageDialog(null,e);
+                        }
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        
         UserProfile up = new UserProfile();
         up.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -323,6 +456,12 @@ public class Home extends javax.swing.JFrame {
     private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
         // TODO add your handling code here:
        source= (String)jComboBox3.getSelectedItem();
+       if (source.equals(destination)){
+            JOptionPane.showMessageDialog(null,"Source and Destination should be different");
+            dispose();
+            Home h = new Home();
+            h.setVisible(true);
+        }
        conn = test.connectToDB();
        String sql ="update users set src=? where userID = ?" ;
        try{
@@ -336,7 +475,13 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox3ActionPerformed
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        String destination= (String)jComboBox2.getSelectedItem();  
+        destination= (String)jComboBox2.getSelectedItem();  
+        if (source.equals(destination)){
+            JOptionPane.showMessageDialog(null,"Source and Destination should be different");
+            dispose();
+            Home h = new Home();
+            h.setVisible(true);
+        }
         conn = test.connectToDB();
         String sql ="update users set dest=? where userID = ?" ;
        try{
@@ -349,6 +494,11 @@ public class Home extends javax.swing.JFrame {
        }
 
     }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Start st = new Start();
+        st.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments

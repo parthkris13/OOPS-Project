@@ -8,8 +8,14 @@ import cab.booking.frames.Home;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.JOptionPane;
-
+import cab.booking.frames.FinishRide;
+import cab.booking.frames.BkgCnf;
 /**
  *
  * @author PARTH KRISHNA SHARMA
@@ -21,12 +27,15 @@ public class LogIn extends javax.swing.JFrame {
      */
     public static String current_id;
     Connection con=null;
+    Connection con1=null;
     PreparedStatement pst=null;
     ResultSet rs=null;
+    PreparedStatement pst1=null;
+    int flag=0;
     
     public LogIn() {
         initComponents();
-        con = test.connectToDB();
+        
     }
 
     /**
@@ -131,21 +140,52 @@ public class LogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        if(BkgCnf.total_rides % 3 == 0)
+        {
+           AssignRandomLocationToDrivers.allocate(); 
+        }
         String pass = password.getText();
         try
         {
             //storing current user
+            con = test.connectToDB();
             current_id = userid.getText();
             //query to get userid and pasword from database
-            String query = "Select userid,pswrd from users where userid='"+userid.getText()+"'";
+            String query = "Select * from users where userid='"+userid.getText()+"'";
             pst = con.prepareStatement(query);
             rs = pst.executeQuery();
+            flag = rs.getInt("free_at");
             //checking if password is valid
+//            JOptionPane.showMessageDialog(null, flag);
             if(pass.equals(rs.getString("pswrd")))
             {
                 JOptionPane.showMessageDialog(null, "Login Successful");
-                Home home = new Home();
-                home.setVisible(true);
+                if (flag==0){
+                    Home home = new Home();
+                    home.setVisible(true);
+                }
+                else if (flag==1){
+//                    JOptionPane.showMessageDialog(null, "inside else if");
+                    Calendar calendar = Calendar.getInstance();  // gets a calendar using the default time zone and locale.
+                    Date date=calendar.getTime();
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    String formattedDate=dateFormat.format(date);
+//                    JOptionPane.showMessageDialog(null, formattedDate);
+//                    JOptionPane.showMessageDialog(null, rs.getString("busy_till"));
+                    if(formattedDate.compareTo(rs.getString("busy_till"))>0){
+//                        JOptionPane.showMessageDialog(null, "inside fnkl");
+                        con.close();
+                        FinishRide fr = new FinishRide();
+                        fr.setVisible(true);
+                    }
+                    else{
+                        con.close();
+                        BkgCnf bc = new BkgCnf();
+                        bc.setVisible(true);
+                    }
+                }
+                
             }
             else
             {
@@ -154,6 +194,7 @@ public class LogIn extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Please recheck password");
             }
             con.close();
+            
     
         }
         catch(Exception e)

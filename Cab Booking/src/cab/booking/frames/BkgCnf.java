@@ -28,13 +28,15 @@ public class BkgCnf extends javax.swing.JFrame {
     Connection conn;
     PreparedStatement pst=null;
     ResultSet rs;
-    int t1, cID, driv, t2, clID;
+    int t1, cID, driv, t2, clID, fr, ulID, dlID;
+    public static int total_rides;
     String formattedDate;
     /**
      * Creates new form BkgCnf
      */
     public BkgCnf() {
         initComponents();
+        total_rides += 1;
         conn = test.connectToDB();
         String ul="", ud="", dc="";
         String sql = "select src,dest,driver_assigned from users where userID=?";
@@ -59,6 +61,7 @@ public class BkgCnf extends javax.swing.JFrame {
             pst.setInt(1, driv);
             rs= pst.executeQuery();
             dc = rs.getString("driver_loc");
+            dlID = rs.getInt("cloc_ID");
             jLabel13.setText(rs.getString("username")+"");
             jLabel14.setText(rs.getInt("phone_num")+"");
             jLabel15.setText(rs.getFloat("rating")+"");
@@ -69,20 +72,24 @@ public class BkgCnf extends javax.swing.JFrame {
         
         
         conn = test.connectToDB(); 
-        sql = "select fare,time, dest_id from locations where src_loc=? and dest_loc=?";
+        sql = "select fare,time, dest_id,loc_id from locations where src_loc=? and dest_loc=?";
         try{
             pst=conn.prepareStatement(sql);
             pst.setString(1, ul);
             pst.setString(2, ud);
             rs= pst.executeQuery();
+            ulID= rs.getInt("loc_id");
             clID = rs.getInt("dest_id");
+            fr = rs.getInt("fare");
             jLabel12.setText(rs.getInt("fare")+"");
             t1= rs.getInt("time");
+            
+            
             conn.close();
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
-        if (ul.equals(dc)){
+        if (ulID==dlID){
             t2=0;
         }
         else{
@@ -112,20 +119,21 @@ public class BkgCnf extends javax.swing.JFrame {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         formattedDate=dateFormat.format(date);
         
+        jLabel11.setText(t1 + t2 + "");
     
         conn = test.connectToDB();
-        sql ="update users set busy_till=?, free_at=? where userID = ?" ;
+        sql ="update users set busy_till=?,fare=?, free_at=? where userID = ?" ;
         try{
             pst = conn.prepareStatement(sql);
             pst.setString(1, formattedDate);
-            pst.setInt(2, 1);
-            pst.setString(3, LogIn.current_id);
+            pst.setInt(2, fr);
+            pst.setInt(3, 1);
+            pst.setString(4, LogIn.current_id);
             pst.executeUpdate();
             conn.close();
           } catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
-        jLabel11.setText(formattedDate);
 //        conn = test.connectToDB();
 //        sql = "select busy_till from users where userID=?";
 //        try{
@@ -143,13 +151,14 @@ public class BkgCnf extends javax.swing.JFrame {
 //        }
 //        
         conn = test.connectToDB();
-        sql ="update drivers set busy_till=?, cloc_ID=?, free=? where driverID = ?" ;
+        sql ="update drivers set busy_till=?, cloc_ID=?, free=?, driver_loc=?  where driverID = ?" ;
         try{
             pst = conn.prepareStatement(sql);
             pst.setString(1, formattedDate);
             pst.setInt(2, clID);
             pst.setInt(3, 1);
-            pst.setInt(4, driv);
+            pst.setString(4, ud);
+            pst.setInt(5, driv);
             pst.executeUpdate();
             conn.close();
           } catch(SQLException e){
@@ -351,9 +360,9 @@ public class BkgCnf extends javax.swing.JFrame {
         Date date1=calendar1.getTime();
         DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss");
         String formattedDate1=dateFormat1.format(date1);
-        JOptionPane.showMessageDialog(null,formattedDate);
+//        JOptionPane.showMessageDialog(null,formattedDate);
         if(formattedDate1.compareTo(formattedDate)>=0){
-            JOptionPane.showMessageDialog(null,formattedDate1);
+//            JOptionPane.showMessageDialog(null,formattedDate1);
             FinishRide fr=new FinishRide(); 
             fr.setVisible(true);
         }

@@ -77,6 +77,11 @@ public class SignUp extends javax.swing.JFrame {
 
         userid.setBackground(new java.awt.Color(255, 255, 51));
         userid.setText("Type User ID");
+        userid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                useridActionPerformed(evt);
+            }
+        });
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("User ID");
@@ -195,30 +200,47 @@ public class SignUp extends javax.swing.JFrame {
     }//GEN-LAST:event_phoneActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        if(BkgCnf.total_rides % 3 == 0)
+        {
+           AssignRandomLocationToDrivers.allocate(); 
+        }
         try{
-            String query = "insert into users values(?,?,?,?,?,?,?,?)";
+            String query = "insert into users values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
             pst = con.prepareStatement(query);
             pst.setString(1, username.getText());
             pst.setInt(2, Integer.parseInt(userid.getText()));
-            pst.setInt(3, Integer.parseInt(phone.getText()));
+            pst.setString(3, phone.getText());
             pst.setString(4, email.getText());
             pst.setString(5, password.getText());
             pst.setInt(6, 0);
             pst.setInt(7, 0);
-            pst.setString(8, "0");
+            pst.setString(8, "");
+            pst.setString(9, "");
+            pst.setInt(10, 0);
+            pst.setString(11, "");
+            pst.setInt(12, 0);
+            pst.setInt(13, 0);
             pst.execute();
+            LogIn.current_id = userid.getText();
+            Home home = new Home();
+            home.setVisible(true);
             
-        }catch(Exception e){
+        }catch(NumberFormatException nfe){
+            JOptionPane.showMessageDialog(null,"Please enter a valid integer value for User ID and Phone number");
+        }
+        catch(Exception e){
             JOptionPane.showMessageDialog(null,e);
         }
-        Home home = new Home();
-        home.setVisible(true);
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_usernameActionPerformed
+
+    private void useridActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_useridActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_useridActionPerformed
 
     /**
      * @param args the command line arguments

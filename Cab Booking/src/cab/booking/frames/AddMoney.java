@@ -8,7 +8,10 @@ import cab.booking.frames.UserProfile;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.NumberFormat;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.text.NumberFormatter;
 
 /**
  *
@@ -25,7 +28,6 @@ public class AddMoney extends javax.swing.JFrame {
      */
     public AddMoney() {
         initComponents();
-        
     }
 
     /**
@@ -39,9 +41,9 @@ public class AddMoney extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,10 +51,6 @@ public class AddMoney extends javax.swing.JFrame {
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Amount ");
-
-        jTextField1.setBackground(new java.awt.Color(0, 255, 255));
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
-        jTextField1.setText("Enter Amount ");
 
         jButton1.setText("Add");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -65,21 +63,22 @@ public class AddMoney extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Add Money");
 
+        jTextField1.setText("Enter Amount");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(46, 46, 46)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(159, Short.MAX_VALUE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(110, Short.MAX_VALUE)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(88, 88, 88))
         );
@@ -91,7 +90,7 @@ public class AddMoney extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap(123, Short.MAX_VALUE))
@@ -112,6 +111,14 @@ public class AddMoney extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+//    NumberFormat format = NumberFormat.getInstance();
+//    NumberFormatter formatter = new NumberFormatter(format);
+//    formatter.setValueClass(Integer.class);
+//    formatter.setMinimum(0);
+//    formatter.setMaximum(Integer.MAX_VALUE);
+//    formatter.setAllowsInvalid(false);
+//    // If you want the value to be committed on each keystroke instead of focus lost
+//    formatter.setCommitsOnValidEdit(true);
         try
         {
             con = test.connectToDB();
@@ -126,20 +133,21 @@ public class AddMoney extends javax.swing.JFrame {
             walletadd+= rs.getInt("wallet");
             con.close();
             
-        }
-        catch(Exception e)
-        {
-            JOptionPane.showMessageDialog(null,e);
-        }
-        try
-        {
+//        }
+////        catch(Exception e)
+////        {
+////            JOptionPane.showMessageDialog(null,e);
+////            
+////        }
+////        try
+////        {
             con = test.connectToDB();
             con.setAutoCommit(false);
             String query2 = "update users set wallet =  ? where userid = ?";
             pst = con.prepareStatement(query2);
             pst.setInt(1 ,walletadd);
             pst.setInt(2 ,Integer.parseInt((LogIn.current_id)));
-            JOptionPane.showMessageDialog(null, "success1");
+            JOptionPane.showMessageDialog(null, "success!");
             // query = "update users set wallet = 'wallet+ " +walletadd+ " 'where userid ='"+LogIn.current_id+"'";  
             
             //rs = pst.executeQuery();
@@ -147,15 +155,21 @@ public class AddMoney extends javax.swing.JFrame {
             pst.executeUpdate();
             con.commit();
 //            pst.executeUpdate();
-              JOptionPane.showMessageDialog(null, "success2");
+//              JOptionPane.showMessageDialog(null, "success2");
+              UserProfile up1 = new UserProfile();
+            up1.setVisible(true);
+              dispose();
         }
         catch(Exception e)
         {
-            JOptionPane.showMessageDialog(null,e);
+            JOptionPane.showMessageDialog(null,"Please enter a valid amount");
+            AddMoney am1 = new AddMoney();
+            am1.setVisible(true);
+            dispose();
             //con.rollback();
         }
-        UserProfile up1 = new UserProfile();
-        up1.setVisible(true);
+      
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

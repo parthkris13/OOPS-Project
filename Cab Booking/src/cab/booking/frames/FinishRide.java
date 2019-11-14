@@ -17,22 +17,28 @@ public class FinishRide extends javax.swing.JFrame {
     Connection con=null;
     ResultSet rs=null;
     PreparedStatement pst=null;
+    int nr;
+    float cr;
+    String current_rating;
     /**
      * Creates new form FinishRide
      */
     public FinishRide() {
         
         initComponents();
+        
         int new_balance = 0;
         try
         {
+            //con.close();
             con = test.connectToDB();
             //fare driver_assigned
-            String query = "select wallet, fare from users where userid = ?";
+            String query = "select wallet,num_ride, fare from users where userid = ?";
             pst = con.prepareStatement(query);
             pst.setInt(1 ,Integer.parseInt((LogIn.current_id)));
             rs = pst.executeQuery();
             new_balance = rs.getInt("wallet") - rs.getInt("fare");
+            nr = rs.getInt("num_ride");
             jTextField2.setText(new_balance+"");
             con.close();
         }
@@ -43,12 +49,13 @@ public class FinishRide extends javax.swing.JFrame {
         try
         {
             con = test.connectToDB();
-            String query2 = "update users set wallet =  ?, free_at = ?, fare = ?  where userid = ?";
+            String query2 = "update users set wallet =  ?, free_at = ?, fare = ?, num_ride=?  where userid = ?";
             pst = con.prepareStatement(query2);
             pst.setInt(1 ,new_balance);
             pst.setInt(2 ,0);
             pst.setInt(3 ,0);
-            pst.setInt(4 ,Integer.parseInt((LogIn.current_id)));
+            pst.setInt(4 ,nr+1);
+            pst.setInt(5 ,Integer.parseInt((LogIn.current_id)));
             pst.executeUpdate();
             con.close();
         }
@@ -56,6 +63,18 @@ public class FinishRide extends javax.swing.JFrame {
         {
             JOptionPane.showMessageDialog(null,e);
         }
+        
+//        con = test.connectToDB();
+//        String sql ="update users set free_at=? where userID = ?" ;
+//        try{
+//            pst = con.prepareStatement(sql);
+//            pst.setInt(1,0);
+//            pst.setString(2, LogIn.current_id);
+//            pst.executeUpdate();
+//            con.close();
+//          } catch(SQLException e){
+//            JOptionPane.showMessageDialog(null,e);
+//        }
     
     }
     
@@ -71,12 +90,12 @@ public class FinishRide extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -89,9 +108,6 @@ public class FinishRide extends javax.swing.JFrame {
 
         jLabel2.setForeground(new java.awt.Color(102, 255, 255));
         jLabel2.setText("Kindly Rate your driver");
-
-        jTextField1.setBackground(new java.awt.Color(255, 255, 0));
-        jTextField1.setForeground(new java.awt.Color(255, 255, 51));
 
         jLabel3.setForeground(new java.awt.Color(102, 255, 255));
         jLabel3.setText("Updated Wallet Balance");
@@ -122,6 +138,14 @@ public class FinishRide extends javax.swing.JFrame {
             }
         });
 
+        jComboBox1.setBackground(new java.awt.Color(255, 255, 51));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Choose Rating", "1", "2", "3", "4", "5" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -130,24 +154,22 @@ public class FinishRide extends javax.swing.JFrame {
                 .addGap(60, 60, 60)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addGap(120, 120, 120)
-                                .addComponent(jButton1))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(114, Short.MAX_VALUE))
+                        .addComponent(jButton2)
+                        .addGap(120, 120, 120)
+                        .addComponent(jButton1))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(52, 52, 52)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addGap(56, 56, 56))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(89, 89, 89)
+                                .addComponent(jButton3)))))
+                .addGap(56, 117, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,8 +179,8 @@ public class FinishRide extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
@@ -185,46 +207,111 @@ public class FinishRide extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        try
+        {
+            
+            con.close();
+            con = test.connectToDB();
+            String query = "select rating, num_rate from drivers where driverid = ?";
+            pst = con.prepareStatement(query);
+            pst.setInt(1, Home.k);
+            rs = pst.executeQuery();
+            float old_rating = rs.getFloat("rating");
+            int num = rs.getInt("num_rate");
+            con.close();
+            cr = (cr + old_rating*num)/(num+1);
+            con = test.connectToDB();
+            query ="update drivers set rating = ?, num_rate = ? where driverID = ?" ;
+            pst = con.prepareStatement(query);
+            pst.setFloat(1, cr);
+            pst.setInt(2, num + 1);
+            pst.setInt(3, Home.k);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null,"Thanks for the feedback!");
+            con.close();  
+        }
+        catch(SQLException e)
+        {
+            JOptionPane.showMessageDialog(null,e);
+        }
         con = test.connectToDB();
-        String sql ="update users set free_at=? where userID = ?" ;
+        String sql ="update drivers set free = ? where driverID = ?" ;
         try{
             pst = con.prepareStatement(sql);
             pst.setInt(1,0);
-            pst.setString(2, LogIn.current_id);
+            pst.setInt(2, Home.k);
             pst.executeUpdate();
             con.close();
+            dispose();
+            Home hh = new Home();
+            hh.setVisible(true);
           } catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+//        
         con = test.connectToDB();
-        String sql ="update users set free_at=? where userID = ?" ;
+        String sql ="update drivers set free=? where driverID = ?" ;
         try{
             pst = con.prepareStatement(sql);
             pst.setInt(1,0);
-            pst.setString(2, LogIn.current_id);
+            pst.setInt(2, Home.k);
             pst.executeUpdate();
             con.close();
+            dispose();
+            Home hh = new Home();
+            hh.setVisible(true);
           } catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
+//          dispose();
+//          Home hr= new Home();
+//          hr.setVisible(true);
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+//        
         con = test.connectToDB();
-        String sql ="update users set free_at=? where userID = ?" ;
+        String sql ="update drivers set free=? where driverID = ?" ;
         try{
             pst = con.prepareStatement(sql);
             pst.setInt(1,0);
-            pst.setString(2, LogIn.current_id);
+            pst.setInt(2, Home.k);
             pst.executeUpdate();
             con.close();
+            dispose();
+            Start strt = new Start();
+            strt.setVisible(true);
           } catch(SQLException e){
             JOptionPane.showMessageDialog(null,e);
         }
+            
+//con = test.connectToDB();
+//        String sql ="update users set free_at=? where userID = ?" ;
+//        try{
+//            pst = con.prepareStatement(sql);
+//            pst.setInt(1,0);
+//            pst.setString(2, LogIn.current_id);
+//            pst.executeUpdate();
+//            con.close();
+//            
+//          } catch(SQLException e){
+//            JOptionPane.showMessageDialog(null,e);
+//        }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+//        JOptionPane.showMessageDialog(null,"in combo box action");
+        current_rating = (String)jComboBox1.getSelectedItem();
+        cr=Float.parseFloat(current_rating);
+//        JOptionPane.showMessageDialog(null,current_rating);
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -265,11 +352,11 @@ public class FinishRide extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
 }
